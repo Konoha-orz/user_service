@@ -48,4 +48,11 @@ public interface UserMapper {
      */
     @Select("select * from user where account = #{account}")
     public List<User> findUserByAccount(String account);
+
+    /**
+     * @return User列表
+     * 获得全部用户列表
+     */
+    @Select("select * from user")
+    public List<User> findAllUser();
 }

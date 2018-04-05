@@ -53,6 +53,10 @@ public class UserController {
         return userService.register(account,password,nickname);
     }
 
+    /**
+     * @param friendAccount 添加好友的账号
+     * @return json格式的msg添加好友响应
+     */
     @RequestMapping("/addFriend")
     public Map<String,Object> addFriend(String friendAccount){
         return userService.addFriend(friendAccount);
