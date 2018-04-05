@@ -2,6 +2,7 @@ package com.pulingle.user_service.web;
 
 import com.pulingle.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,12 +35,11 @@ public class UserController {
     /**
      * @param account 前台传来的用户账户
      * @param password 前台传来的用户密码
-     * @param session Session
      * @return json格式的msg 登陆响应
      */
-    @RequestMapping("/checkLogin")
-    public Map<String, Object> checkUser(String account, String password, HttpSession session){
-        return userService.checkUser(account,password,session);
+    @RequestMapping("/login")
+    public Map<String, Object> checkUser(String account, String password){
+        return userService.login(account,password);
     }
 
     /**
@@ -51,6 +51,11 @@ public class UserController {
     @RequestMapping("/register")
     public Map<String,Object> register(String account,String password,String nickname){
         return userService.register(account,password,nickname);
+    }
+
+    @RequestMapping("/addFriend")
+    public Map<String,Object> addFriend(String friendAccount){
+        return userService.addFriend(friendAccount);
     }
 
 }
