@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,6 +34,13 @@ public interface UserInfoMapper {
     @Select("select * from user_info where user_id = #{user_id}")
     public List<User_info> findUserInfoByUserid(int user_id);
 
+    /**
+     * @return User_info列表
+     * 查询所有的用户信息对象
+     */
     @Select("select * from user_info")
     public List<User_info> findAllUserInfo();
+
+    @Insert("insert into user_info(user_id,account,nickname,create_time) values(#{user_id},#{account},#{nickname},#{create_time})")
+    public void register(User_info user_info);
 }

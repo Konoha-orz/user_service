@@ -45,18 +45,12 @@ public class UserController {
     /**
      * @param account 账号
      * @param password 密码
-     * @param retype_password 再次输入密码
-     * @param phone 电话
      * @param nickname 昵称
-     * @param sex 性别
-     * @param email 邮箱
-     * @param signature 个性签名
-     * @param session Session
      * @return json格式的msg 注册响应
      */
     @RequestMapping("/register")
-    public Map<String,Object> register(String account,String password,String retype_password,String phone,String nickname,String sex,String email,String signature,HttpSession session){
-        return userService.register(account,password,retype_password,phone,nickname,sex,email,signature,session);
+    public Map<String,Object> register(String account,String password,String nickname){
+        return userService.register(account,password,nickname);
     }
 
 }
