@@ -1,14 +1,14 @@
-package com.pulingle.user_service.domain.entity.dto;
+package com.pulingle.user_service.domain.dto;
 
 import java.io.Serializable;
 
 /**
- * Created by @杨健 on 2018/4/1 17:43
+ * Created by 杨健 on 2018/3/30
  *
  * @Des: 接口返回信息体
  */
 
-public class RespondBody implements Serializable {
+public class RespondBody implements Serializable{
     //接口调用状态1成功，0失败
     private String status;
     //调用返回失败信息，0000为成功

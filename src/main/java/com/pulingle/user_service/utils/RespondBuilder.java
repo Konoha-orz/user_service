@@ -1,7 +1,6 @@
 package com.pulingle.user_service.utils;
 
-
-import com.pulingle.user_service.domain.entity.dto.RespondBody;
+import com.pulingle.user_service.domain.dto.RespondBody;
 
 /**
  * Created by @杨健 on 2018/4/1 17:43
