@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public interface UserService {
 
-    Map<String,Object> login(String account, String password);
+    RespondBody login(String account, String password);
 
-    Map<String,Object> register(String account, String password, String nickname);
+    RespondBody register(String account, String password, String nickname);
 
 //    Map<String,Object> addFriend(String friendAccount);
 

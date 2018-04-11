@@ -46,7 +46,7 @@ public interface UserInfoMapper {
      * @param user_info 用户信息对象
      * 用于注册是插入用户信息
      */
-    @Insert("insert into user_info(user_id,account,nickname,create_time) values(#{user_id},#{account},#{nickname},#{create_time})")
+    @Insert("insert into user_info(user_id,account,nickname,create_time,friends_list) values(#{user_id},#{account},#{nickname},#{create_time},#{friends_list})")
     public void register(User_info user_info);
 
 //    @Update("update user_info set friends_list=#{friends_list} where account=#{account}")

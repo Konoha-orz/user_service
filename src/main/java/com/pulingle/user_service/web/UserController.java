@@ -39,7 +39,7 @@ public class UserController {
      * @return json格式的msg 登陆响应
      */
     @RequestMapping("/login")
-    public Map<String, Object> checkUser(String account, String password){
+    public RespondBody checkUser(String account, String password){
         return userService.login(account,password);
     }
 
@@ -50,7 +50,7 @@ public class UserController {
      * @return json格式的msg 注册响应
      */
     @RequestMapping("/register")
-    public Map<String,Object> register(String account,String password,String nickname){
+    public RespondBody register(String account,String password,String nickname){
         return userService.register(account,password,nickname);
     }
 

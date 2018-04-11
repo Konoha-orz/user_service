@@ -42,10 +42,10 @@ public class UserServiceImpl implements UserService {
     private OutMessageFeign outMessageFeign;
 
     @Override
-    public Map<String,Object> login(String account, String password) {
-        Map<String,Object> returnmap = new HashMap<String,Object>();
+    public RespondBody login(String account, String password) {
+        RespondBody respondBody;
         if(account.equals("")||password.equals("")){
-            returnmap.put("msg","0");
+            respondBody = RespondBuilder.buildErrorResponse("账号或密码为空");
         }else {
             String password_db=userMapper.findPasswordByAccount(account);
             MD5 md5 = new MD5();
@@ -54,18 +54,17 @@ public class UserServiceImpl implements UserService {
                 User u = userMapper.findUserByAccount(account).get(0);
                 String token = JwtUtil.generToken(String.valueOf(u.getUser_id()),null,null);
                 stringRedisTemplate.opsForValue().set("token",token,300, TimeUnit.SECONDS);
-                returnmap.put("token",token);
-                returnmap.put("msg","1");
+                respondBody = RespondBuilder.buildNormalResponse(token);
             }else{
-                returnmap.put("msg","2");
+                respondBody = RespondBuilder.buildErrorResponse("账号或密码错误");
             }
         }
-        return returnmap;
+        return respondBody;
     }
 
     @Override
-    public Map<String, Object> register(String account, String password, String nickname) {
-        Map<String,Object> returnmap = new HashMap<String,Object>();
+    public RespondBody register(String account, String password, String nickname) {
+        RespondBody respondBody;
         List<User> l = userMapper.findAllUser();
         boolean flag= true;
         for(int k=0;k<l.size();k++){
@@ -87,13 +86,15 @@ public class UserServiceImpl implements UserService {
             user_info.setNickname(nickname);
             Date date = new Date();//生成当前时间
             user_info.setCreate_time(date);
-            user_info.setFriends_list("null");
+            String friendList = "FL"+String.valueOf(user_id);
+            user_info.setFriends_list(friendList);
             userInfoMapper.register(user_info);//插入userinfo表
-            returnmap.put("msg", "1");//注册成功
+            System.out.println(user_info.getFriends_list());
+            respondBody = RespondBuilder.buildNormalResponse("注册成功");//注册成功
         }else{
-            returnmap.put("msg","0");//注册失败，用户已存在
+            respondBody = RespondBuilder.buildErrorResponse("注册失败，用户已存在");//注册失败，用户已存在
         }
-        return returnmap;
+        return respondBody;
     }
 
 //    @Override
@@ -155,9 +156,7 @@ public class UserServiceImpl implements UserService {
         try {
             stringRedisTemplate.opsForSet().add("FL" + userId, String.valueOf(friendId));//在调用者的好友列表中添加请求者的id
             stringRedisTemplate.opsForSet().add("FL" + friendId, String.valueOf(userId));//在请求者的好友列表中添加调用者的id
-            System.out.println("准备调用");
             outMessageFeign.deleteMessage(messageId);//根据传入的messageid调用message_service中的删除消息接口删除已处理的好友请求
-            System.out.println("调用结束");
             respondBody = RespondBuilder.buildNormalResponse("调用成功");
         }catch (Exception e){
             respondBody = RespondBuilder.buildErrorResponse(e.getMessage());
