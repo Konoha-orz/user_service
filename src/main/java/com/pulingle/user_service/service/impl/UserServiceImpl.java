@@ -3,6 +3,7 @@ package com.pulingle.user_service.service.impl;
 
 
 import com.netflix.discovery.converters.Auto;
+import com.pulingle.user_service.domain.dto.MessageDTO;
 import com.pulingle.user_service.domain.dto.RespondBody;
 import com.pulingle.user_service.domain.entity.User;
 import com.pulingle.user_service.domain.entity.User_info;
@@ -155,7 +156,9 @@ public class UserServiceImpl implements UserService {
         try {
             stringRedisTemplate.opsForSet().add("FL" + userId, String.valueOf(friendId));//在调用者的好友列表中添加请求者的id
             stringRedisTemplate.opsForSet().add("FL" + friendId, String.valueOf(userId));//在请求者的好友列表中添加调用者的id
-            outMessageFeign.deleteMessage(messageId);//根据传入的messageid调用message_service中的删除消息接口删除已处理的好友请求
+            MessageDTO messageDTO=new MessageDTO();
+            messageDTO.setMessageId(messageId);
+            outMessageFeign.deleteMessage(messageDTO);//根据传入的messageid调用message_service中的删除消息接口删除已处理的好友请求
             respondBody = RespondBuilder.buildNormalResponse("调用成功");
         }catch (Exception e){
             respondBody = RespondBuilder.buildErrorResponse(e.getMessage());
