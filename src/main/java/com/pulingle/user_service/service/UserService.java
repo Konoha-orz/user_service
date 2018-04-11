@@ -21,4 +21,6 @@ public interface UserService {
 //    Map<String,Object> addFriend(String friendAccount);
 
     RespondBody acceptFriendRequest(long userId, long friendId, long messageId);
+
+    RespondBody deleteFriend(long userId,long friendId);
 }

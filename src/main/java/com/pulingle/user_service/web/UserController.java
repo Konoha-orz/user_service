@@ -75,4 +75,15 @@ public class UserController {
         return userService.acceptFriendRequest(userId,friendId,messageId);
     }
 
+    /**
+     * @param userId 调用接口的用户id
+     * @param friendId 请求对方的用户id
+     * @return 返回体
+     * 删除好友
+     */
+    @RequestMapping("/deleteFriend")
+    public RespondBody deleteFriend(long userId,long friendId){
+        return userService.deleteFriend(userId,friendId);
+    }
+
 }

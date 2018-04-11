@@ -164,5 +164,19 @@ public class UserServiceImpl implements UserService {
         return respondBody;
     }
 
+    @Override
+    public RespondBody deleteFriend(long userId, long friendId) {
+        RespondBody respondBody;
+        try {
+            stringRedisTemplate.opsForSet().remove("FL" + userId, String.valueOf(friendId));//在调用者的好友列表中删除请求者的id
+            stringRedisTemplate.opsForSet().remove("FL" + friendId, String.valueOf(userId));//在请求者的好友列表中删除调用者的id
+            respondBody = RespondBuilder.buildNormalResponse("调用成功");
+        }catch (Exception e){
+            respondBody = RespondBuilder.buildErrorResponse(e.getMessage());
+            e.printStackTrace();
+        }
+        return respondBody;
+    }
+
 
 }
