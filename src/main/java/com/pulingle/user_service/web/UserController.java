@@ -1,6 +1,6 @@
 package com.pulingle.user_service.web;
 
-import com.pulingle.user_service.domain.entity.dto.RespondBody;
+import com.pulingle.user_service.domain.dto.RespondBody;
 import com.pulingle.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -63,8 +63,15 @@ public class UserController {
 //        return userService.addFriend(friendAccount);
 //    }
 
+    /**
+     * @param userId 调用接口的用户id
+     * @param friendId 请求添加好友的用户id
+     * @param messageId 好友请求消息id
+     * @return 返回体
+     * 接受好友请求，并删除好友请求消息记录
+     */
     @RequestMapping("/acceptFriendRequest")
-    public RespondBody acceptFriendRequest(long userId,long friendId,long messageId){
+    public RespondBody acceptFriendRequest(long userId, long friendId, long messageId){
         return userService.acceptFriendRequest(userId,friendId,messageId);
     }
 

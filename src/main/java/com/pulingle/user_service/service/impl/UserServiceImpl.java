@@ -6,6 +6,7 @@ import com.netflix.discovery.converters.Auto;
 import com.pulingle.user_service.domain.dto.RespondBody;
 import com.pulingle.user_service.domain.entity.User;
 import com.pulingle.user_service.domain.entity.User_info;
+import com.pulingle.user_service.feign.OutMessageFeign;
 import com.pulingle.user_service.mapper.UserInfoMapper;
 import com.pulingle.user_service.mapper.UserMapper;
 import com.pulingle.user_service.service.UserService;
@@ -36,6 +37,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private OutMessageFeign outMessageFeign;
 
     @Override
     public Map<String,Object> login(String account, String password) {
@@ -149,11 +153,12 @@ public class UserServiceImpl implements UserService {
     public RespondBody acceptFriendRequest(long userId, long friendId, long messageId) {
         RespondBody respondBody;
         try {
-            stringRedisTemplate.opsForSet().add("FL" + userId, String.valueOf(friendId));
-            stringRedisTemplate.opsForSet().add("FL" + friendId, String.valueOf(userId));
+            stringRedisTemplate.opsForSet().add("FL" + userId, String.valueOf(friendId));//在调用者的好友列表中添加请求者的id
+            stringRedisTemplate.opsForSet().add("FL" + friendId, String.valueOf(userId));//在请求者的好友列表中添加调用者的id
+            outMessageFeign.deleteMessage(messageId);//根据传入的messageid调用message_service中的删除消息接口删除已处理的好友请求
             respondBody = RespondBuilder.buildNormalResponse("调用成功");
         }catch (Exception e){
-            respondBody = RespondBuilder.buildErrorResponse("接受失败！");
+            respondBody = RespondBuilder.buildErrorResponse(e.getMessage());
             e.printStackTrace();
         }
         return respondBody;
