@@ -3,14 +3,15 @@ package com.pulingle.user_service.service.impl;
 
 
 import com.netflix.discovery.converters.Auto;
+import com.pulingle.user_service.domain.dto.RespondBody;
 import com.pulingle.user_service.domain.entity.User;
 import com.pulingle.user_service.domain.entity.User_info;
-import com.pulingle.user_service.domain.entity.dto.RespondBody;
 import com.pulingle.user_service.mapper.UserInfoMapper;
 import com.pulingle.user_service.mapper.UserMapper;
 import com.pulingle.user_service.service.UserService;
 import com.pulingle.user_service.utils.JwtUtil;
 import com.pulingle.user_service.utils.MD5;
+import com.pulingle.user_service.utils.RespondBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -91,10 +92,10 @@ public class UserServiceImpl implements UserService {
         return returnmap;
     }
 
-    @Override
-    public Map<String, Object> addFriend(String friendAccount) {
-        return null;
-    }
+//    @Override
+//    public Map<String, Object> addFriend(String friendAccount) {
+//        return null;
+//    }
 
 //    @Override
 //    public Map<String, Object> addFriend(String friendAccount) {
@@ -146,11 +147,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RespondBody acceptFriendRequest(long userId, long friendId, long messageId) {
-//        RespondBody respondBody;
-//        stringRedisTemplate.opsForSet().add("FL"+userId,String.valueOf(friendId));
-//        stringRedisTemplate.opsForSet().add("FL"+friendId,String.valueOf(userId));
-//        return respondBody;
-        return null;
+        RespondBody respondBody;
+        try {
+            stringRedisTemplate.opsForSet().add("FL" + userId, String.valueOf(friendId));
+            stringRedisTemplate.opsForSet().add("FL" + friendId, String.valueOf(userId));
+            respondBody = RespondBuilder.buildNormalResponse("调用成功");
+        }catch (Exception e){
+            respondBody = RespondBuilder.buildErrorResponse("接受失败！");
+            e.printStackTrace();
+        }
+        return respondBody;
     }
 
 
