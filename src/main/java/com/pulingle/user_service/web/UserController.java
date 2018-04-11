@@ -86,4 +86,13 @@ public class UserController {
         return userService.deleteFriend(userId,friendId);
     }
 
+    /**
+     * @param userId 调用接口的用户id
+     * @return 返回体
+     * 通过用户id查询用户的好友列表长度
+     */
+    @RequestMapping("/getFriendAmount")
+    public RespondBody getFriendAmount(long userId){
+        return userService.getFriendAmount(userId);
+    }
 }

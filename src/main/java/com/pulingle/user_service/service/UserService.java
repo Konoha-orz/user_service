@@ -23,4 +23,6 @@ public interface UserService {
     RespondBody acceptFriendRequest(long userId, long friendId, long messageId);
 
     RespondBody deleteFriend(long userId,long friendId);
+
+    RespondBody getFriendAmount(long userId);
 }
