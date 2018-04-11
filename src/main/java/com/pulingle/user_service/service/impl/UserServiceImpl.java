@@ -182,8 +182,8 @@ public class UserServiceImpl implements UserService {
     public RespondBody getFriendAmount(long userId) {
         RespondBody respondBody;
         try {
-            stringRedisTemplate.opsForSet().size("FL"+userId);//获取好友列表长度
-            respondBody = RespondBuilder.buildNormalResponse("调用成功");
+            long amount = stringRedisTemplate.opsForSet().size("FL"+userId);//获取好友列表长度
+            respondBody = RespondBuilder.buildNormalResponse(String.valueOf(amount));//返回值添加
         }catch (Exception e){
             respondBody = RespondBuilder.buildErrorResponse(e.getMessage());
             e.printStackTrace();
