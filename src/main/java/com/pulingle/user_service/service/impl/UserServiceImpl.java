@@ -155,7 +155,9 @@ public class UserServiceImpl implements UserService {
         try {
             stringRedisTemplate.opsForSet().add("FL" + userId, String.valueOf(friendId));//在调用者的好友列表中添加请求者的id
             stringRedisTemplate.opsForSet().add("FL" + friendId, String.valueOf(userId));//在请求者的好友列表中添加调用者的id
+            System.out.println("准备调用");
             outMessageFeign.deleteMessage(messageId);//根据传入的messageid调用message_service中的删除消息接口删除已处理的好友请求
+            System.out.println("调用结束");
             respondBody = RespondBuilder.buildNormalResponse("调用成功");
         }catch (Exception e){
             respondBody = RespondBuilder.buildErrorResponse(e.getMessage());

@@ -22,7 +22,7 @@ public interface OutMessageFeign {
      * @return 返回体
      * 调用message-service中的接口：通过消息id删除好友请求消息
      */
-    @RequestMapping(value="/Message/deleteFriendRequest",method = RequestMethod.POST)
+    @RequestMapping(value="/message/deleteFriendRequest",method = RequestMethod.POST)
     public @ResponseBody RespondBody deleteMessage(long messageId);
 
 }
