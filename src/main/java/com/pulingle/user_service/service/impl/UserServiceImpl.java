@@ -5,6 +5,7 @@ package com.pulingle.user_service.service.impl;
 import com.netflix.discovery.converters.Auto;
 import com.pulingle.user_service.domain.entity.User;
 import com.pulingle.user_service.domain.entity.User_info;
+import com.pulingle.user_service.domain.entity.dto.RespondBody;
 import com.pulingle.user_service.mapper.UserInfoMapper;
 import com.pulingle.user_service.mapper.UserMapper;
 import com.pulingle.user_service.service.UserService;
@@ -92,50 +93,64 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, Object> addFriend(String friendAccount) {
-        Map<String,Object> returnmap = new HashMap<String,Object>();
-        String token = stringRedisTemplate.opsForValue().get("token");
-        int user_id = Integer.valueOf(JwtUtil.verifyToken(token).getId());
-        User_info user_info = userInfoMapper.findUserInfoByUserid(user_id).get(0);
-        try {
-            if(!friendAccount.equals(user_info.getAccount())) {
-                List<User> list = userMapper.findUserByAccount(friendAccount);
-//                System.out.println(list.size());
-                if (list.size() != 0) {
-                    if (user_info.getFriends_list().equals("null")) {
-                        user_info.setFriends_list(friendAccount);
-                        userInfoMapper.updateFriendList(user_info);
-                        returnmap.put("msg", "2");//添加好友成功
-                    } else {
-                        boolean flag = true;
-                        String friends = user_info.getFriends_list();
-                        String[] friend = friends.split(",");
-                        for (int i = 0; i < friend.length; i++) {
-                            if (friendAccount.equals(friend[i])) {
-                                flag = false;
-                            }
-                        }
-                        if (flag) {
-                            StringBuilder sb = new StringBuilder(friends);
-                            sb.append("," + friendAccount);
-                            String friendList = sb.toString();
-                            user_info.setFriends_list(friendList);
-                            userInfoMapper.updateFriendList(user_info);
-                            returnmap.put("msg", "2");//添加好友成功
-                        } else {
-                            returnmap.put("msg", "1");//好友已存在了
-                        }
-                    }
-                } else {
-                    returnmap.put("msg", "0");//这个account不存在
-                }
-            }else {
-                returnmap.put("msg","3");//不能添加自己为好友
-            }
-        }catch (NullPointerException e){
-            e.printStackTrace();
-            returnmap.put("msg","0");//这个account不存在
-        }
-        return returnmap;
+        return null;
+    }
+
+//    @Override
+//    public Map<String, Object> addFriend(String friendAccount) {
+//        Map<String,Object> returnmap = new HashMap<String,Object>();
+//        String token = stringRedisTemplate.opsForValue().get("token");
+//        int user_id = Integer.valueOf(JwtUtil.verifyToken(token).getId());
+//        User_info user_info = userInfoMapper.findUserInfoByUserid(user_id).get(0);
+//        try {
+//            if(!friendAccount.equals(user_info.getAccount())) {
+//                List<User> list = userMapper.findUserByAccount(friendAccount);
+////                System.out.println(list.size());
+//                if (list.size() != 0) {
+//                    if (user_info.getFriends_list().equals("null")) {
+//                        user_info.setFriends_list(friendAccount);
+//                        userInfoMapper.updateFriendList(user_info);
+//                        returnmap.put("msg", "2");//添加好友成功
+//                    } else {
+//                        boolean flag = true;
+//                        String friends = user_info.getFriends_list();
+//                        String[] friend = friends.split(",");
+//                        for (int i = 0; i < friend.length; i++) {
+//                            if (friendAccount.equals(friend[i])) {
+//                                flag = false;
+//                            }
+//                        }
+//                        if (flag) {
+//                            StringBuilder sb = new StringBuilder(friends);
+//                            sb.append("," + friendAccount);
+//                            String friendList = sb.toString();
+//                            user_info.setFriends_list(friendList);
+//                            userInfoMapper.updateFriendList(user_info);
+//                            returnmap.put("msg", "2");//添加好友成功
+//                        } else {
+//                            returnmap.put("msg", "1");//好友已存在了
+//                        }
+//                    }
+//                } else {
+//                    returnmap.put("msg", "0");//这个account不存在
+//                }
+//            }else {
+//                returnmap.put("msg","3");//不能添加自己为好友
+//            }
+//        }catch (NullPointerException e){
+//            e.printStackTrace();
+//            returnmap.put("msg","0");//这个account不存在
+//        }
+//        return returnmap;
+//    }
+
+    @Override
+    public RespondBody acceptFriendRequest(long userId, long friendId, long messageId) {
+//        RespondBody respondBody;
+//        stringRedisTemplate.opsForSet().add("FL"+userId,String.valueOf(friendId));
+//        stringRedisTemplate.opsForSet().add("FL"+friendId,String.valueOf(userId));
+//        return respondBody;
+        return null;
     }
 
 

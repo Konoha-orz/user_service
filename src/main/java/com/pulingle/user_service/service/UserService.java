@@ -1,5 +1,6 @@
 package com.pulingle.user_service.service;
 
+import com.pulingle.user_service.domain.entity.dto.RespondBody;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,4 +20,5 @@ public interface UserService {
 
     Map<String,Object> addFriend(String friendAccount);
 
+    RespondBody acceptFriendRequest(long userId, long friendId, long messageId);
 }

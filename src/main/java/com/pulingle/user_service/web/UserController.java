@@ -1,5 +1,6 @@
 package com.pulingle.user_service.web;
 
+import com.pulingle.user_service.domain.entity.dto.RespondBody;
 import com.pulingle.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -53,13 +54,18 @@ public class UserController {
         return userService.register(account,password,nickname);
     }
 
-    /**
-     * @param friendAccount 添加好友的账号
-     * @return json格式的msg添加好友响应
-     */
-    @RequestMapping("/addFriend")
-    public Map<String,Object> addFriend(String friendAccount){
-        return userService.addFriend(friendAccount);
+//    /**
+//     * @param friendAccount 添加好友的账号
+//     * @return json格式的msg添加好友响应
+//     */
+//    @RequestMapping("/addFriend")
+//    public Map<String,Object> addFriend(String friendAccount){
+//        return userService.addFriend(friendAccount);
+//    }
+
+    @RequestMapping("/acceptFriendRequest")
+    public RespondBody acceptFriendRequest(long userId,long friendId,long messageId){
+        return userService.acceptFriendRequest(userId,friendId,messageId);
     }
 
 }
