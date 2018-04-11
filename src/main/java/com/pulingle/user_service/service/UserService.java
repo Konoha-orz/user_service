@@ -25,4 +25,6 @@ public interface UserService {
     RespondBody deleteFriend(long userId,long friendId);
 
     RespondBody getFriendAmount(long userId);
+
+    RespondBody getFriendInfoList(long userId);
 }

@@ -95,4 +95,14 @@ public class UserController {
     public RespondBody getFriendAmount(long userId){
         return userService.getFriendAmount(userId);
     }
+
+    /**
+     * @param userId 调用接口的用户Id
+     * @return 返回体
+     * 根据用户id查询用户的好友列表
+     */
+    @RequestMapping("/getFriendInfoList")
+    public RespondBody getFriendInfoList(long userId){
+        return userService.getFriendInfoList(userId);
+    }
 }

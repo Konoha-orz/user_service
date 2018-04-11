@@ -9,7 +9,7 @@ public class User {
     /**
      * 用户id
      */
-    private int user_id;
+    private long user_id;
     /**
      * 账号
      */
@@ -19,11 +19,11 @@ public class User {
      */
     private String password;
 
-    public int getUser_id() {
+    public long getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(int user_id) {
+    public void setUser_id(long user_id) {
         this.user_id = user_id;
     }
 

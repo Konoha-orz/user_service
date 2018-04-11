@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
             user.setAccount(account);
             user.setPassword(passwordAfterMd5);
             userMapper.insertIntoUser(user);//先插入user表，以获得userid
-            int user_id = userMapper.findUserByAccount(account).get(0).getUser_id();
+            long user_id = userMapper.findUserByAccount(account).get(0).getUser_id();
             user_info.setUser_id(user_id);
             user_info.setAccount(account);
             user_info.setNickname(nickname);
@@ -184,6 +184,29 @@ public class UserServiceImpl implements UserService {
         try {
             stringRedisTemplate.opsForSet().size("FL"+userId);//获取好友列表长度
             respondBody = RespondBuilder.buildNormalResponse("调用成功");
+        }catch (Exception e){
+            respondBody = RespondBuilder.buildErrorResponse(e.getMessage());
+            e.printStackTrace();
+        }
+        return respondBody;
+    }
+
+    @Override
+    public RespondBody getFriendInfoList(long userId) {
+        RespondBody respondBody;
+        try {
+            User_info ui = userInfoMapper.findUserInfoByUserid(userId).get(0);//获得当前用户的对象
+            String friendList = ui.getFriends_list(); //获得当前用户的好友列表key
+            Set<String> s = stringRedisTemplate.opsForSet().members(friendList);//通过key获得redis中的set
+            List<Map> returnlist = new ArrayList<>();//定义返回列表
+            for(String friendId:s){//遍历set
+                Map<String,Object> m = new HashMap<>();
+                m.put("userId",friendId);//获得好友id
+                m.put("profilePictureUrl",userInfoMapper.findUserInfoByUserid(Long.valueOf(friendId)).get(0).getProfile_picture_url());//获得好友头像地址
+                m.put("nickname",userInfoMapper.findUserInfoByUserid(Long.valueOf(friendId)).get(0).getNickname());//获得好友昵称
+                returnlist.add(m);
+            }
+            respondBody = RespondBuilder.buildNormalResponse(returnlist);//返回对象添加
         }catch (Exception e){
             respondBody = RespondBuilder.buildErrorResponse(e.getMessage());
             e.printStackTrace();
