@@ -1,10 +1,8 @@
 package com.pulingle.user_service.mapper;
 
 import com.pulingle.user_service.domain.entity.User_info;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import com.rabbitmq.http.client.domain.UserInfo;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -35,12 +33,12 @@ public interface UserInfoMapper {
     @Select("select * from user_info where user_id = #{user_id}")
     public List<User_info> findUserInfoByUserid(long user_id);
 
-    /**
-     * @return User_info列表
-     * 查询所有的用户信息对象
-     */
-    @Select("select * from user_info")
-    public List<User_info> findAllUserInfo();
+//    /**
+//     * @return User_info列表
+//     * 查询所有的用户信息对象
+//     */
+//    @Select("select * from user_info")
+//    public List<User_info> findAllUserInfo();
 
     /**
      * @param user_info 用户信息对象
@@ -52,4 +50,31 @@ public interface UserInfoMapper {
 //    @Update("update user_info set friends_list=#{friends_list} where account=#{account}")
 //    public void updateFriendList(User_info user_info);
 
+    /**
+    * @param: userInfo
+    * @return: int
+    * @Des: userInfo表插入一条记录
+    */
+    int insert(User_info user_info);
+
+    /**
+    * @param: account账号
+    * @return: List<User_info>
+    * @Des: 通过account查找用户信息
+    */
+    List<User_info> queryUserInfoByAccount(@Param("account")String account);
+
+    /**
+    * @param: User_info
+    * @return: int
+    * @Des: 更新用户个人资料
+    */
+    int updateUserInfo(User_info user_info);
+
+    /**
+    * @param: user_id,profile_picture_url
+    * @return: int
+    * @Des: 更新用户头像
+    */
+    int updateProfilePicture(User_info user_info);
 }

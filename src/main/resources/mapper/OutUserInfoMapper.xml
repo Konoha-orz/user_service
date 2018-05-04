@@ -3,11 +3,18 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.pulingle.user_service.mapper.OutUserInfoMapper">
-    <select id="getUserBasicInfo" resultType="java.util.Map">
+    <select id="getUserBasicInfo" resultType="UserBasicInfo">
         SELECT user_id as userId,nickname,profile_picture_url as profilePictureUrl FROM user_info
         WHERE user_id IN
         <foreach collection="idList"  item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
     </select>
+    <select id="getUserInfo" resultType="java.util.Map">
+        SELECT user_id AS userId,account,phone,nickname,profile_picture_url AS profilePictureUrl,sex,email,friends_list AS friendsList,
+        signature,pictures_list AS picturesList,create_time AS createTime FROM user_info
+        WHERE user_id =#{userId}
+    </select>
+
+
 </mapper>

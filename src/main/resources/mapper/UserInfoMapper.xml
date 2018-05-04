@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pulingle.user_service.mapper.UserInfoMapper">
+    <insert id="insert"  parameterType="User_info">
+        INSERT  INTO user_info(user_id,account,nickname,friends_list,create_time)
+        VALUES (#{user_id},#{account},#{nickname},#{friends_list},#{create_time})
+    </insert>
+    <select id="queryUserInfoByAccount" resultType="User_info">
+        SELECT * FROM user_info WHERE account=#{account}
+    </select>
+    <update id="updateUserInfo">
+        UPDATE user_info SET nickname=#{nickname},sex=#{sex},email=#{email},signature=#{signature}
+        <where>
+            user_id=#{user_id}
+        </where>
+    </update>
+    <update id="updateProfilePicture">
+        UPDATE user_info SET profile_picture_url=#{profile_picture_url}
+        <where>
+            user_id=#{user_id}
+        </where>
+    </update>
+</mapper>

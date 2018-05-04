@@ -1,0 +1,2 @@
+2018-05-03 19:50:15.424 ERROR 12472 --- [AMQP Connection 120.78.81.233:5672] o.s.a.r.c.CachingConnectionFactory       : Channel shutdown: connection error
+2018-05-03 19:50:15.428 ERROR 12472 --- [AMQP Connection 120.78.81.233:5672] o.s.a.r.c.CachingConnectionFactory       : Channel shutdown: connection error

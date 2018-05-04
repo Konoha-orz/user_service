@@ -1,5 +1,6 @@
 package com.pulingle.user_service.mapper;
 
+import com.pulingle.user_service.domain.entity.UserBasicInfo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
@@ -18,5 +19,18 @@ public interface OutUserInfoMapper {
     * @return: List<Map>（用户基础信息列表）
     * @Des: 根据用户Id列表查询用户基础信息
     */
-    List<Map> getUserBasicInfo(@Param("idList") List<String> idList);
+    List<UserBasicInfo> getUserBasicInfo(@Param("idList") List<String> idList);
+
+    /**
+    * @param: userId
+    * @return: Map
+    * @Des: 根据用户ID查询用户信息
+    */
+    Map getUserInfo(@Param("userId")long userId);
+
+
+
+
+
+
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pulingle.user_service.mapper.UserMapper">
+    <select id="countAccount" resultType="java.lang.Integer">
+        SELECT count(account) FROM pulingle_user_db.user where account=#{account}
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="user_id" parameterType="User">
+        INSERT  INTO pulingle_user_db.user(account,password)
+        VALUES (#{account},#{password})
+    </insert>
+</mapper>

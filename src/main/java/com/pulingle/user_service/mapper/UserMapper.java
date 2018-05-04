@@ -3,6 +3,7 @@ package com.pulingle.user_service.mapper;
 import com.pulingle.user_service.domain.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 
@@ -49,10 +50,29 @@ public interface UserMapper {
     @Select("select * from user where account = #{account}")
     public List<User> findUserByAccount(String account);
 
+//    /**
+//     * @return User列表
+//     * 获得全部用户列表
+//     */
+//    @Select("select * from user")
+//    public List<User> findAllUser();
+
+
+
     /**
-     * @return User列表
-     * 获得全部用户列表
-     */
-    @Select("select * from user")
-    public List<User> findAllUser();
+    * @param: 用户输入account账号
+    * @return: int 库中记录数
+    * @Des: 查询表中account值为account的记录数
+    */
+    int countAccount(@Param("account")String account);
+
+    /**
+    * @param: user
+    * @return: int
+    * @Des: user表插入一条数据
+    */
+    int insert(User user);
+
+
+
 }

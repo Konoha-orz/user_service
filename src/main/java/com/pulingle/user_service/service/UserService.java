@@ -1,6 +1,7 @@
 package com.pulingle.user_service.service;
 
 import com.pulingle.user_service.domain.dto.RespondBody;
+import com.pulingle.user_service.domain.entity.User_info;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,17 +15,50 @@ import java.util.Map;
  */
 public interface UserService {
 
-    Map<String,Object> login(String account, String password);
+    RespondBody login(String account, String password,String captcha,String timeStamp);
 
-    Map<String,Object> register(String account, String password, String nickname);
+    RespondBody register(String account, String password, String nickname);
 
-//    Map<String,Object> addFriend(String friendAccount);
 
     RespondBody acceptFriendRequest(long userId, long friendId, long messageId);
 
     RespondBody deleteFriend(long userId,long friendId);
 
-    RespondBody getFriendAmount(long userId);
-
     RespondBody getFriendInfoList(long userId);
+
+    /**
+    * @param: account用户账号
+    * @return: RespondBody
+    * @Des: 用户登录获取图形验证码服务
+    */
+    RespondBody getCaptcha(String account);
+
+    /**
+    * @param:  user_info
+    * @return: RespondBody
+    * @Des: 用户个人资料修改
+    */
+    RespondBody updateUserInfo(User_info user_info);
+
+    /**
+    * @param: User_info(user_id,profile_picture_url)
+    * @return: RespondBody
+    * @Des: 修改用户头像
+    */
+    RespondBody saveProfilePicture(User_info user_info);
+
+    /**
+    * @param: token
+    * @return: RespondBody
+    * @Des: 根据token获取用户基本信息
+    */
+    RespondBody tokenResolve(String token);
+
+    /**
+    * @param: token
+    * @return: RespondBody
+    * @Des: 用户登出
+    */
+    RespondBody logout(String token);
+
 }

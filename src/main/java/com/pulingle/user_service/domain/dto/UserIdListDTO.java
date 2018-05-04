@@ -10,7 +10,10 @@ import java.util.List;
  */
 
 public class UserIdListDTO implements Serializable {
+
     private List<String> idList;
+
+    private long userId;
 
     public List<String> getIdList() {
         return idList;
@@ -18,5 +21,13 @@ public class UserIdListDTO implements Serializable {
 
     public void setIdList(List<String> idList) {
         this.idList = idList;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }
