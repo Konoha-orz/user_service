@@ -13,7 +13,13 @@ public class UserIdListDTO implements Serializable {
 
     private List<String> idList;
 
+
     private long userId;
+
+    /**
+     * 显示好友个数
+     */
+    private int num;
 
     public List<String> getIdList() {
         return idList;
@@ -29,5 +35,13 @@ public class UserIdListDTO implements Serializable {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 }

@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSON;
 import com.netflix.discovery.converters.Auto;
 import com.pulingle.user_service.domain.dto.MessageDTO;
 import com.pulingle.user_service.domain.dto.RespondBody;
-import com.pulingle.user_service.domain.entity.User;
-import com.pulingle.user_service.domain.entity.User_info;
+import com.pulingle.user_service.domain.dto.UserIdListDTO;
+import com.pulingle.user_service.domain.entity.*;
 import com.pulingle.user_service.feign.OutMessageFeign;
+import com.pulingle.user_service.feign.OutMomentFeign;
+import com.pulingle.user_service.mapper.OutUserInfoMapper;
 import com.pulingle.user_service.mapper.UserInfoMapper;
 import com.pulingle.user_service.mapper.UserMapper;
 import com.pulingle.user_service.service.UserService;
@@ -18,6 +20,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -34,7 +37,8 @@ public class UserServiceImpl implements UserService {
     private final String FRIENDS_LIST_STR = "FL";
     private final String CAPTCHA_STR = "CAP";
     private final String TOKEN_STR = "TOKEN";
-    private final long TOKEN_TIME=1800000;
+    //TOKEN时长(毫秒)
+    private final long TOKEN_TIME=24*60*60*1000;
 
     private final long CAPTCHA_TIME = 60;
 
@@ -50,9 +54,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private OutMessageFeign outMessageFeign;
 
+    @Autowired
+    private OutMomentFeign outMomentFeign;
+
+    @Autowired
+    private OutUserInfoMapper outUserInfoMapper;
+
     @Override
     public RespondBody login(String account, String password, String captcha,String timeStamp) {
         RespondBody respondBody;
+        int momentNum=0;
+        long friendNum=0;
         try {
             if (account==null||account.equals("") ||password==null|| password.equals("") || captcha.equals("")||captcha==null)
                 return RespondBuilder.buildErrorResponse("参数缺省");
@@ -70,9 +82,20 @@ public class UserServiceImpl implements UserService {
                 String token=TokenUtil.createJWT(String.valueOf(user_info.getUser_id()),subject,TOKEN_TIME);
                 //Token存入Redis
                 stringRedisTemplate.opsForValue().set(TOKEN_STR+user_info.getUser_id(),token,TOKEN_TIME,TimeUnit.MILLISECONDS);
+                //通过Feign调用获取用户发布动态数
+                UserBasicInfo userBasicInfo=new UserBasicInfo();
+                userBasicInfo.setUserId(user_info.getUser_id());
+                RespondBody momentRespondBody=outMomentFeign.getMomentsNum(userBasicInfo);
+                if(momentRespondBody.getStatus().equals("1"))
+                    momentNum= (int) momentRespondBody.getData();
+                //获取好友数
+                if(stringRedisTemplate.hasKey(FRIENDS_LIST_STR+user_info.getUser_id()))
+                    friendNum=stringRedisTemplate.opsForSet().size(FRIENDS_LIST_STR+user_info.getUser_id());
                 Map data=new HashMap();
                 data.put("userInfo",user_info);
                 data.put("token",token);
+                data.put("momentNum",momentNum);
+                data.put("friendNum",friendNum);
                 respondBody=RespondBuilder.buildNormalResponse(data);
             } else
                 return RespondBuilder.buildErrorResponse("密码错误");
@@ -128,6 +151,22 @@ public class UserServiceImpl implements UserService {
             MessageDTO messageDTO = new MessageDTO();
             messageDTO.setMessageId(messageId);
             outMessageFeign.deleteMessage(messageDTO);//根据传入的messageid调用message_service中的删除消息接口删除已处理的好友请求
+            //给双方发送新好友消息
+            Message messageA=new Message();
+            Message messageB=new Message();
+            Date date=new Date();
+            messageA.setType(1);
+            messageB.setType(1);
+            messageA.setSendUserId(userId);
+            messageB.setSendUserId(friendId);
+            messageA.setReceUserId(friendId);
+            messageB.setReceUserId(userId);
+            messageA.setContent("现在我们是好友了");
+            messageB.setContent("现在我们是好友了");
+            messageA.setSendTime(date);
+            messageB.setSendTime(date);
+            outMessageFeign.sendMessage(messageA);
+            outMessageFeign.sendMessage(messageB);
             respondBody = RespondBuilder.buildNormalResponse("调用成功");
         } catch (Exception e) {
             respondBody = RespondBuilder.buildErrorResponse(e.getMessage());
@@ -241,6 +280,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public RespondBody tokenResolve(String token) {
         RespondBody respondBody;
+        int momentNum=0;
+        long friendNum=0;
         try {
             //先解析该token字符串，若没失效则解析成功
             Claims claims=TokenUtil.parseJWT(token);
@@ -249,8 +290,22 @@ public class UserServiceImpl implements UserService {
             //如果该token解析成功，判断redis中的是否失效
             if(stringRedisTemplate.hasKey(TOKEN_STR+user_info.getUser_id())){
                 String redisToken=stringRedisTemplate.opsForValue().get(TOKEN_STR+user_info.getUser_id());
-                if(redisToken.equals(token))
-                    respondBody=RespondBuilder.buildNormalResponse(user_info);
+                if(redisToken.equals(token)) {
+                    //通过Feign调用获取用户发布动态数
+                    UserBasicInfo userBasicInfo=new UserBasicInfo();
+                    userBasicInfo.setUserId(user_info.getUser_id());
+                    RespondBody momentRespondBody=outMomentFeign.getMomentsNum(userBasicInfo);
+                    if(momentRespondBody.getStatus().equals("1"))
+                        momentNum= (int) momentRespondBody.getData();
+                    //获取好友数
+                    if(stringRedisTemplate.hasKey(FRIENDS_LIST_STR+user_info.getUser_id()))
+                        friendNum=stringRedisTemplate.opsForSet().size(FRIENDS_LIST_STR+user_info.getUser_id());
+                    HashMap data=new HashMap();
+                    data.put("userInfo",user_info);
+                    data.put("momentNum",momentNum);
+                    data.put("friendNum",friendNum);
+                    respondBody = RespondBuilder.buildNormalResponse(data);
+                }
                 else
                     respondBody=RespondBuilder.buildErrorResponse("Token过期，请重新登录");
             }else {
@@ -278,6 +333,54 @@ public class UserServiceImpl implements UserService {
                 respondBody=RespondBuilder.buildNormalResponse("Token已过期");
         }catch (Exception e){
             respondBody=RespondBuilder.buildNormalResponse("Token已过期");
+        }
+        return respondBody;
+    }
+
+    @Override
+    public RespondBody queryFriendMomentStatus(long userId, int num) {
+        RespondBody respondBody;
+        try{
+            if(userId==0)
+                return RespondBuilder.buildErrorResponse("userId不能为0");
+            String friendListKey=FRIENDS_LIST_STR+String.valueOf(userId);
+            if(!stringRedisTemplate.hasKey(friendListKey))
+                return RespondBuilder.buildNormalResponse(null);
+            Set<String> idSet=stringRedisTemplate.opsForSet().members(friendListKey);
+            List<String> idList=new ArrayList<>(idSet);
+            //通过Feign调用，获取好友近期最新发布动态的时间
+            UserIdListDTO userIdListDTO=new UserIdListDTO();
+            userIdListDTO.setIdList(idList);
+            RespondBody feignRepondBody=outMomentFeign.queryFriendNewMomentTime(userIdListDTO);
+            if(feignRepondBody.getStatus().equals("0"))
+                respondBody=RespondBuilder.buildErrorResponse("获取好友最新动态状况失败");
+            else {
+                LinkedHashMap linkedHashMap= (LinkedHashMap) feignRepondBody.getData();
+                List<Map> resultList=new ArrayList<>();
+                if(linkedHashMap.size()>0){
+                    //遍历linkedHashMap
+                    Iterator iterator=linkedHashMap.entrySet().iterator();
+                    int i=0;
+                    while (iterator.hasNext()){
+                        //显示朋友个数
+                        if(i==num)
+                            break;
+                        Map.Entry entry= (Map.Entry) iterator.next();
+                        String id= (String) entry.getKey();
+                        Map moment=(Map) entry.getValue();
+                        Map userInfo=outUserInfoMapper.getUserInfo(Long.valueOf(id));
+                        //获取时间差信息
+                        String time=(String)moment.get("time");
+                        userInfo.put("time",time);
+                        resultList.add(userInfo);
+                        i++;
+                    }
+                }
+                respondBody=RespondBuilder.buildNormalResponse(resultList);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            respondBody=RespondBuilder.buildErrorResponse(e.getMessage());
         }
         return respondBody;
     }

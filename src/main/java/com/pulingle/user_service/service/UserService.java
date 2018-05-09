@@ -61,4 +61,11 @@ public interface UserService {
     */
     RespondBody logout(String token);
 
+    /**
+     * @param: userId,num
+     * @return: RespondBody
+     * @Des: 获取用户num个好友近1天新发布动态的时间
+     */
+    RespondBody queryFriendMomentStatus(long userId,int num);
+
 }

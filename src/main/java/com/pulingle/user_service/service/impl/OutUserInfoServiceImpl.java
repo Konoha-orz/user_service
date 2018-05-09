@@ -250,10 +250,17 @@ public class OutUserInfoServiceImpl implements OutUserInfoService {
                     resultList.add(userInfoMap);
                 }
                 //去除有新消息的ID
-                friendSet.removeAll(idSet);
+                Set<String> idStringSet=new HashSet<String>();
+                for(int i:idSet){
+                    idStringSet.add(String.valueOf(i));
+                }
+                friendSet.removeAll(idStringSet);
                 List<String> friendList=new ArrayList<>(friendSet);
-                List newUserInfoList=outUserInfoMapper.getUserBasicInfo(friendList);
-                resultList.addAll(newUserInfoList);
+                //如果还有好友
+                if(friendList.size()>0) {
+                    List newUserInfoList = outUserInfoMapper.getUserBasicInfo(friendList);
+                    resultList.addAll(newUserInfoList);
+                }
                 respondBody=RespondBuilder.buildNormalResponse(resultList);
             }else {
                 List<String> idList=new ArrayList<>(friendSet);

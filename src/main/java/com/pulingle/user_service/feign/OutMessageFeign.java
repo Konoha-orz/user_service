@@ -2,6 +2,7 @@ package com.pulingle.user_service.feign;
 
 import com.pulingle.user_service.domain.dto.MessageDTO;
 import com.pulingle.user_service.domain.dto.RespondBody;
+import com.pulingle.user_service.domain.entity.Message;
 import com.pulingle.user_service.domain.entity.UserBasicInfo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.cloud.netflix.feign.FeignClient;
@@ -37,5 +38,13 @@ public interface OutMessageFeign {
      */
     @RequestMapping(value = "/getNewMessageFriendIdList",method = RequestMethod.POST)
     public RespondBody getNewMessageFriendIdList(@RequestBody UserBasicInfo userBasicInfo);
+
+    /**
+     * @param: sendUserId,receUserId,content,type
+     * @return: RespondBody
+     * @Des: 发送消息接口
+     */
+    @RequestMapping(value = "/send",method = RequestMethod.POST)
+    public RespondBody sendMessage(@RequestBody Message message);
 
 }

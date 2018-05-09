@@ -1,6 +1,7 @@
 package com.pulingle.user_service.web;
 
 import com.pulingle.user_service.domain.dto.RespondBody;
+import com.pulingle.user_service.domain.dto.UserIdListDTO;
 import com.pulingle.user_service.domain.dto.UserLoginDTO;
 import com.pulingle.user_service.domain.dto.UserRegisterDTO;
 import com.pulingle.user_service.domain.entity.User;
@@ -125,6 +126,16 @@ public class UserController {
     @RequestMapping(value = "/user/logout",method = RequestMethod.POST)
     public RespondBody logout(@RequestBody UserLoginDTO userLoginDTO){
         return userService.logout(userLoginDTO.getToken());
+    }
+
+    /**
+     * @param: userId,num
+     * @return: RespondBody
+     * @Des: 获取用户num个好友近1天新发布动态的时间
+     */
+    @RequestMapping(value = "/user/queryFriendMomentStatus",method = RequestMethod.POST)
+    RespondBody queryFriendMomentStatus(@RequestBody UserIdListDTO userIdListDTO){
+        return userService.queryFriendMomentStatus(userIdListDTO.getUserId(),userIdListDTO.getNum());
     }
 
 }
