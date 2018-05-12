@@ -68,4 +68,11 @@ public interface UserService {
      */
     RespondBody queryFriendMomentStatus(long userId,int num);
 
+    /**
+     * @param: name
+     * @return: List<Map>
+     * @Des: 根据昵称模糊查询用户
+     */
+    RespondBody searchByNickname(String name,int num);
+
 }

@@ -22,4 +22,11 @@
             user_id=#{user_id}
         </where>
     </update>
+    <select id="searchByNickname" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT user_id AS userId , nickname,profile_picture_url AS profilePictureUrl ,sex FROM user_info
+        <where>
+            nickname LIKE CONCAT(#{name},"%")
+        </where>
+        limit #{num}
+    </select>
 </mapper>

@@ -74,6 +74,8 @@ public class UserServiceImpl implements UserService {
                 return RespondBuilder.buildErrorResponse("验证码失效，请重新获取验证码");
             if (!captcha.equalsIgnoreCase(redisCap))
                 return RespondBuilder.buildErrorResponse("验证码错误");
+            if (userMapper.existUser(account)<1)
+                return RespondBuilder.buildErrorResponse("账号不存在");
             String password_db = userMapper.findPasswordByAccount(account);
             if (MD5.verify(password, password_db)) {
                 //生成Token令牌
@@ -355,29 +357,50 @@ public class UserServiceImpl implements UserService {
             if(feignRepondBody.getStatus().equals("0"))
                 respondBody=RespondBuilder.buildErrorResponse("获取好友最新动态状况失败");
             else {
+
                 LinkedHashMap linkedHashMap= (LinkedHashMap) feignRepondBody.getData();
                 List<Map> resultList=new ArrayList<>();
-                if(linkedHashMap.size()>0){
-                    //遍历linkedHashMap
-                    Iterator iterator=linkedHashMap.entrySet().iterator();
-                    int i=0;
-                    while (iterator.hasNext()){
-                        //显示朋友个数
-                        if(i==num)
-                            break;
-                        Map.Entry entry= (Map.Entry) iterator.next();
-                        String id= (String) entry.getKey();
-                        Map moment=(Map) entry.getValue();
-                        Map userInfo=outUserInfoMapper.getUserInfo(Long.valueOf(id));
-                        //获取时间差信息
-                        String time=(String)moment.get("time");
-                        userInfo.put("time",time);
-                        resultList.add(userInfo);
-                        i++;
+                if(linkedHashMap!=null) {
+                    if (linkedHashMap.size() > 0) {
+                        //遍历linkedHashMap
+                        Iterator iterator = linkedHashMap.entrySet().iterator();
+                        int i = 0;
+                        while (iterator.hasNext()) {
+                            //显示朋友个数
+                            if (i == num)
+                                break;
+                            Map.Entry entry = (Map.Entry) iterator.next();
+                            String id = (String) entry.getKey();
+                            Map moment = (Map) entry.getValue();
+                            Map userInfo = outUserInfoMapper.getUserInfo(Long.valueOf(id));
+                            //获取时间差信息
+                            String time = (String) moment.get("time");
+                            userInfo.put("time", time);
+                            resultList.add(userInfo);
+                            i++;
+                        }
                     }
                 }
                 respondBody=RespondBuilder.buildNormalResponse(resultList);
             }
+        }catch (Exception e){
+            e.printStackTrace();
+            respondBody=RespondBuilder.buildErrorResponse(e.getMessage());
+        }
+        return respondBody;
+    }
+
+    @Override
+    public RespondBody searchByNickname(String name,int num) {
+        RespondBody respondBody;
+        try {
+            if(name.equals("")||name==null){
+                return RespondBuilder.buildNormalResponse(null);
+            }
+            if(num<0)
+                return RespondBuilder.buildErrorResponse("num不能小于0");
+            List<Map> resultList=userInfoMapper.searchByNickname(name,num);
+            respondBody=RespondBuilder.buildNormalResponse(resultList);
         }catch (Exception e){
             e.printStackTrace();
             respondBody=RespondBuilder.buildErrorResponse(e.getMessage());

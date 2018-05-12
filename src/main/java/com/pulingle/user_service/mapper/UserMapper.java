@@ -57,7 +57,8 @@ public interface UserMapper {
 //    @Select("select * from user")
 //    public List<User> findAllUser();
 
-
+    @Select("select count(*) from user where account = #{account}")
+    int existUser(String account);
 
     /**
     * @param: 用户输入account账号

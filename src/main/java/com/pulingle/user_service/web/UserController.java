@@ -7,6 +7,7 @@ import com.pulingle.user_service.domain.dto.UserRegisterDTO;
 import com.pulingle.user_service.domain.entity.User;
 import com.pulingle.user_service.domain.entity.User_info;
 import com.pulingle.user_service.service.UserService;
+import com.rabbitmq.http.client.domain.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -136,6 +137,16 @@ public class UserController {
     @RequestMapping(value = "/user/queryFriendMomentStatus",method = RequestMethod.POST)
     RespondBody queryFriendMomentStatus(@RequestBody UserIdListDTO userIdListDTO){
         return userService.queryFriendMomentStatus(userIdListDTO.getUserId(),userIdListDTO.getNum());
+    }
+
+    /**
+     * @param: name
+     * @return: List<Map>
+     * @Des: 根据昵称模糊查询用户
+     */
+    @RequestMapping(value = "/user/searchByNickname",method = RequestMethod.POST)
+    RespondBody searchByNickname(@RequestBody UserIdListDTO userIdListDTO){
+        return userService.searchByNickname(userIdListDTO.getNickname(),userIdListDTO.getNum());
     }
 
 }

@@ -21,6 +21,11 @@ public class UserIdListDTO implements Serializable {
      */
     private int num;
 
+    /**
+     * 昵称
+     */
+    private String nickname;
+
     public List<String> getIdList() {
         return idList;
     }
@@ -43,5 +48,13 @@ public class UserIdListDTO implements Serializable {
 
     public void setNum(int num) {
         this.num = num;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: Teemo
@@ -77,4 +78,11 @@ public interface UserInfoMapper {
     * @Des: 更新用户头像
     */
     int updateProfilePicture(User_info user_info);
+
+    /**
+    * @param: name
+    * @return: List<Map>
+    * @Des: 根据昵称模糊查询用户
+    */
+    List<Map> searchByNickname(@Param("name")String name,@Param("num")int num);
 }

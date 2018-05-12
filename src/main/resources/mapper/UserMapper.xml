@@ -10,4 +10,5 @@
         INSERT  INTO pulingle_user_db.user(account,password)
         VALUES (#{account},#{password})
     </insert>
+
 </mapper>
