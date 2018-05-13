@@ -233,6 +233,7 @@ public class OutUserInfoServiceImpl implements OutUserInfoService {
         ArrayList<Integer> idSet;
 //        List<Integer> idSet;
         HashMap contentMap=new HashMap();
+        HashMap messageNumMap=new HashMap();
         try{
             //通过Feign调用获取最新好友消息及其ID列表
             UserBasicInfo userBasicInfo=new UserBasicInfo();
@@ -244,9 +245,11 @@ public class OutUserInfoServiceImpl implements OutUserInfoService {
                 Map respondMap= (Map) friendRespondBody.getData();
                 idSet= (ArrayList<Integer>) respondMap.get("ideSet");
                 contentMap= (HashMap) respondMap.get("contentMap");
+                messageNumMap=(HashMap)respondMap.get("messageNumMap");
                 for(int str:idSet){
                     Map userInfoMap=outUserInfoMapper.getUserInfo(Long.valueOf(str));
                     userInfoMap.put("content",contentMap.get(String.valueOf(str)));
+                    userInfoMap.put("messageNum",messageNumMap.get(String.valueOf(str)));
                     resultList.add(userInfoMap);
                 }
                 //去除有新消息的ID

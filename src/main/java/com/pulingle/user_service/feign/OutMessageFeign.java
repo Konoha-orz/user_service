@@ -47,4 +47,12 @@ public interface OutMessageFeign {
     @RequestMapping(value = "/send",method = RequestMethod.POST)
     public RespondBody sendMessage(@RequestBody Message message);
 
+    /**
+     * @param: userId,friendId
+     * @return: RespondBody
+     * @Des: 删除好友之间的消息记录
+     */
+    @RequestMapping(value = "/deleteFriendMessage",method = RequestMethod.POST)
+    public RespondBody deleteFriendMessage(@RequestBody MessageDTO messageDTO);
+
 }

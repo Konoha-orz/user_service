@@ -50,6 +50,16 @@ public class MessageDTO implements Serializable {
      */
     private String content;
 
+    /**
+     * 用户ID
+     */
+    private long userId;
+
+    /**
+     * 好友Id
+     */
+    private long friendId;
+
     public long getMessageId() {
         return messageId;
     }
@@ -114,17 +124,19 @@ public class MessageDTO implements Serializable {
         this.content = content;
     }
 
-    @Override
-    public String toString() {
-        return "MessageDTO{" +
-                "messageId=" + messageId +
-                ", type=" + type +
-                ", readStatus=" + readStatus +
-                ", sendUserId=" + sendUserId +
-                ", receUserId=" + receUserId +
-                ", sendTime=" + sendTime +
-                ", deleteStatus=" + deleteStatus +
-                ", content='" + content + '\'' +
-                '}';
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public long getFriendId() {
+        return friendId;
+    }
+
+    public void setFriendId(long friendId) {
+        this.friendId = friendId;
     }
 }

@@ -183,7 +183,15 @@ public class UserServiceImpl implements UserService {
         try {
             stringRedisTemplate.opsForSet().remove("FL" + userId, String.valueOf(friendId));//在调用者的好友列表中删除请求者的id
             stringRedisTemplate.opsForSet().remove("FL" + friendId, String.valueOf(userId));//在请求者的好友列表中删除调用者的id
-            respondBody = RespondBuilder.buildNormalResponse("调用成功");
+            //通过Feign调用message-service删除与好友之间的消息记录
+            MessageDTO messageDTO=new MessageDTO();
+            messageDTO.setUserId(userId);
+            messageDTO.setFriendId(friendId);
+            RespondBody messageRespondBody=outMessageFeign.deleteFriendMessage(messageDTO);
+            if (messageRespondBody.getStatus().equals("1"))
+                respondBody = RespondBuilder.buildNormalResponse("调用成功");
+            else
+                respondBody = RespondBuilder.buildErrorResponse("消息记录删除错误");
         } catch (Exception e) {
             respondBody = RespondBuilder.buildErrorResponse(e.getMessage());
             e.printStackTrace();
