@@ -75,4 +75,11 @@ public interface UserService {
      */
     RespondBody searchByNickname(String name,int num);
 
+    /**
+    * @param: email
+    * @return: RespondBody
+    * @Des: 验证邮箱是否已使用
+    */
+    RespondBody checkEmail(String email);
+
 }

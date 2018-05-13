@@ -149,4 +149,14 @@ public class UserController {
         return userService.searchByNickname(userIdListDTO.getNickname(),userIdListDTO.getNum());
     }
 
+    /**
+     * @param: email
+     * @return: RespondBody
+     * @Des: 验证邮箱是否已使用
+     */
+    @RequestMapping(value = "/user/checkEmail",method = RequestMethod.POST)
+    RespondBody checkEmail(@RequestBody User_info user_info){
+        return userService.checkEmail(user_info.getEmail());
+    }
+
 }

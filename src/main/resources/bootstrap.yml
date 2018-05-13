@@ -1,8 +1,8 @@
 spring:
   cloud:
     config:
-#      profile: dev
-      profile: production
+      profile: dev
+#      profile: production
       label: master
       discovery:
         enabled: true
@@ -19,5 +19,5 @@ eureka:
 #       defaultZone: http://192.168.1.247:8761/eureka/
   instance:
     prefer-ip-address: true
-    ip-address: 47.106.148.149
+#    ip-address: 47.106.148.149
 #    指定服务IP地址

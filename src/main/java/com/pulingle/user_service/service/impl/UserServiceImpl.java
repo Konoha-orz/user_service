@@ -2,7 +2,7 @@ package com.pulingle.user_service.service.impl;
 
 
 import com.alibaba.fastjson.JSON;
-import com.netflix.discovery.converters.Auto;
+
 import com.pulingle.user_service.domain.dto.MessageDTO;
 import com.pulingle.user_service.domain.dto.RespondBody;
 import com.pulingle.user_service.domain.dto.UserIdListDTO;
@@ -18,9 +18,6 @@ import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -249,22 +246,35 @@ public class UserServiceImpl implements UserService {
     public RespondBody updateUserInfo(User_info user_info) {
         RespondBody respondBody;
         try{
+            User_info newUserInfo=new User_info();
             if(user_info.getUser_id()==0||user_info.getNickname()==null||user_info.getNickname().equals(""))
                 return RespondBuilder.buildErrorResponse("参数缺省");
+            else {
+                newUserInfo.setUser_id(user_info.getUser_id());
+                newUserInfo.setNickname(user_info.getNickname());
+            }
             if(!(user_info.getSex()==0||user_info.getSex()==1))
                 return RespondBuilder.buildErrorResponse("性别只能为0或1");
-            if(user_info.getEmail()!=null||!user_info.getEmail().equals("")) {
+            else
+                newUserInfo.setSex(user_info.getSex());
+            if(!(user_info.getEmail()==null||user_info.getEmail().equals(""))) {
                 //邮箱合法校验
                 String RULE_EMAIL = "^\\w+((-\\w+)|(\\.\\w+))*\\@[A-Za-z0-9]+((\\.|-)[A-Za-z0-9]+)*\\.[A-Za-z0-9]+$";
                 //正则表达式的模式
                 Pattern p = Pattern.compile(RULE_EMAIL);
                 //正则表达式的匹配器
                 Matcher m = p.matcher(user_info.getEmail());
-                if (!m.matches())
+                if (m.matches()) {
+                    if(userInfoMapper.countEmail(user_info.getEmail())>0)
+                        return RespondBuilder.buildErrorResponse("邮箱已使用");
+                    else
+                        newUserInfo.setEmail(user_info.getEmail());
+                }
+                else
                     return RespondBuilder.buildErrorResponse("邮箱不合法");
             }
-            userInfoMapper.updateUserInfo(user_info);
-            respondBody=RespondBuilder.buildNormalResponse(user_info);
+            userInfoMapper.updateUserInfo(newUserInfo);
+            respondBody=RespondBuilder.buildNormalResponse(newUserInfo);
         }catch (Exception e){
             e.printStackTrace();
             return RespondBuilder.buildErrorResponse(e.getMessage());
@@ -409,6 +419,21 @@ public class UserServiceImpl implements UserService {
                 return RespondBuilder.buildErrorResponse("num不能小于0");
             List<Map> resultList=userInfoMapper.searchByNickname(name,num);
             respondBody=RespondBuilder.buildNormalResponse(resultList);
+        }catch (Exception e){
+            e.printStackTrace();
+            respondBody=RespondBuilder.buildErrorResponse(e.getMessage());
+        }
+        return respondBody;
+    }
+
+    @Override
+    public RespondBody checkEmail(String email) {
+        RespondBody respondBody;
+        try {
+            if(userInfoMapper.countEmail(email)>0)
+                respondBody=RespondBuilder.buildNormalResponse("0");
+            else
+                respondBody=RespondBuilder.buildNormalResponse("1");
         }catch (Exception e){
             e.printStackTrace();
             respondBody=RespondBuilder.buildErrorResponse(e.getMessage());

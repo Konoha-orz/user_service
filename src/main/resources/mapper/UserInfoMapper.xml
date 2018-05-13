@@ -29,4 +29,10 @@
         </where>
         limit #{num}
     </select>
+    <select id="countEmail" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM user_info
+        <where>
+            email=#{email}
+        </where>
+    </select>
 </mapper>

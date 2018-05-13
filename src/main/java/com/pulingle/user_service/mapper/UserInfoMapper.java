@@ -85,4 +85,11 @@ public interface UserInfoMapper {
     * @Des: 根据昵称模糊查询用户
     */
     List<Map> searchByNickname(@Param("name")String name,@Param("num")int num);
+
+    /**
+    * @param: email
+    * @return: int
+    * @Des: 查询邮箱数
+    */
+    int countEmail(@Param("email")String email);
 }
