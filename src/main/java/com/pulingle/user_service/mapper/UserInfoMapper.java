@@ -92,4 +92,11 @@ public interface UserInfoMapper {
     * @Des: 查询邮箱数
     */
     int countEmail(@Param("email")String email);
+
+    /**
+     * @param: account账号
+     * @return: User_info
+     * @Des: 通过id查找用户信息
+     */
+    User_info queryUserInfoById(@Param("userId")long userId);
 }

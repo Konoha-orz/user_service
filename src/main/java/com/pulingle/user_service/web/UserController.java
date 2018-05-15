@@ -122,7 +122,7 @@ public class UserController {
     /**
      * @param: token
      * @return:  RespondBody
-     * @Des: 根据Token获取用户信息
+     * @Des: 根据Token删除Token信息
      */
     @RequestMapping(value = "/user/logout",method = RequestMethod.POST)
     public RespondBody logout(@RequestBody UserLoginDTO userLoginDTO){

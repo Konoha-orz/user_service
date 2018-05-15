@@ -35,4 +35,7 @@
             email=#{email}
         </where>
     </select>
-</mapper>
+    <select id="queryUserInfoById" resultType="User_info">
+        SELECT * FROM user_info WHERE user_id=#{userId}
+    </select>
+ </mapper>
