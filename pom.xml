@@ -99,6 +99,17 @@
 			<artifactId>fastjson</artifactId>
 			<version>1.2.40</version>
 		</dependency>
+		<!-- Javabean 转Map -->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.2</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>

@@ -7,14 +7,10 @@ import com.pulingle.user_service.domain.dto.UserRegisterDTO;
 import com.pulingle.user_service.domain.entity.User;
 import com.pulingle.user_service.domain.entity.User_info;
 import com.pulingle.user_service.service.UserService;
-import com.rabbitmq.http.client.domain.UserInfo;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
-import java.util.Map;
 
 /**
  * @Author: Teemo
@@ -157,6 +153,16 @@ public class UserController {
     @RequestMapping(value = "/user/checkEmail",method = RequestMethod.POST)
     RespondBody checkEmail(@RequestBody User_info user_info){
         return userService.checkEmail(user_info.getEmail());
+    }
+
+    /**
+     * @param: userId,password,
+     * @return: RespondBody
+     * @Des: 修改密码
+     */
+    @RequestMapping(value = "/user/updatePassword",method = RequestMethod.POST)
+    RespondBody updatePassword(@RequestBody User user,HttpServletRequest request){
+        return userService.updatePassword(user.getUser_id(),user.getPassword(),request);
     }
 
 }

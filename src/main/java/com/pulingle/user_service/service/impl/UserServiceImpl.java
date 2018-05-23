@@ -3,6 +3,7 @@ package com.pulingle.user_service.service.impl;
 
 import com.alibaba.fastjson.JSON;
 
+import com.alibaba.fastjson.JSONObject;
 import com.pulingle.user_service.domain.dto.MessageDTO;
 import com.pulingle.user_service.domain.dto.RespondBody;
 import com.pulingle.user_service.domain.dto.UserIdListDTO;
@@ -15,6 +16,9 @@ import com.pulingle.user_service.mapper.UserMapper;
 import com.pulingle.user_service.service.UserService;
 import com.pulingle.user_service.utils.*;
 import io.jsonwebtoken.Claims;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -31,6 +35,7 @@ import java.util.regex.Pattern;
  */
 @Service
 public class UserServiceImpl implements UserService {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String FRIENDS_LIST_STR = "FL";
     private final String CAPTCHA_STR = "CAP";
@@ -92,7 +97,7 @@ public class UserServiceImpl implements UserService {
                 if (stringRedisTemplate.hasKey(FRIENDS_LIST_STR + user_info.getUser_id()))
                     friendNum = stringRedisTemplate.opsForSet().size(FRIENDS_LIST_STR + user_info.getUser_id());
                 Map data = new HashMap();
-                data.put("userInfo", user_info);
+                data=BeanToMap.beanToMap(user_info);
                 data.put("token", token);
                 data.put("momentNum", momentNum);
                 data.put("friendNum", friendNum);
@@ -336,7 +341,8 @@ public class UserServiceImpl implements UserService {
                     if (stringRedisTemplate.hasKey(FRIENDS_LIST_STR + user_info.getUser_id()))
                         friendNum = stringRedisTemplate.opsForSet().size(FRIENDS_LIST_STR + user_info.getUser_id());
                     HashMap data = new HashMap();
-                    data.put("userInfo", user_info);
+                    data= (HashMap) BeanToMap.beanToMap(user_info);
+//                    data.put("userInfo", user_info);
                     data.put("momentNum", momentNum);
                     data.put("friendNum", friendNum);
                     respondBody = RespondBuilder.buildNormalResponse(data);
@@ -451,6 +457,49 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             e.printStackTrace();
             respondBody = RespondBuilder.buildErrorResponse(e.getMessage());
+        }
+        return respondBody;
+    }
+
+    @Override
+    public RespondBody updatePassword(long userId, String password, HttpServletRequest request) {
+        RespondBody respondBody;
+        try {
+            if(userId==0)
+                return RespondBuilder.buildErrorResponse("userId不能为0");
+            if(password.equals("")||password==null)
+                return RespondBuilder.buildErrorResponse("密码不能为空");
+            //检验是否有Token
+            if(request.getHeader("token")==null||request.getHeader("token").equals(""))
+                return RespondBuilder.buildErrorResponse("用户请先登录");
+            if(password.length()<7)
+                return RespondBuilder.buildErrorResponse("密码长度大于6位");
+            else {
+                //获取Token
+                String token=request.getHeader("token");
+                //先验证Redis中缓存Token是否一致
+                if(stringRedisTemplate.hasKey(TOKEN_STR+userId)){
+                    String redisToken=stringRedisTemplate.opsForValue().get(TOKEN_STR+userId);
+                    if(redisToken.equals(token)){
+                        try{
+                            //解析Token
+                            Claims claims = TokenUtil.parseJWT(token);
+                            //解析成功，修改密码
+                            String encodedPassword = MD5.generate(password);
+                            userMapper.updatePassword(userId,encodedPassword);
+                            respondBody=RespondBuilder.buildNormalResponse("修改密码成功");
+                        }catch (Exception e){
+                            logger.error(e.getMessage());
+                            return RespondBuilder.buildErrorResponse("Token已过期，请重新登录");
+                        }
+                    }else
+                        return RespondBuilder.buildErrorResponse("用户请先登录");
+                }else
+                    return RespondBuilder.buildErrorResponse("用户请先登录");
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            respondBody=RespondBuilder.buildErrorResponse("修改密码失败");
         }
         return respondBody;
     }

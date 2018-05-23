@@ -74,6 +74,13 @@ public interface UserMapper {
     */
     int insert(User user);
 
+    /**
+    * @param: userId,password
+    * @return: int
+    * @Des: 修改用户密码
+    */
+    int updatePassword(@Param("userId")long userId,@Param("password")String password);
+
 
 
 }

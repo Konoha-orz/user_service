@@ -10,5 +10,10 @@
         INSERT  INTO pulingle_user_db.user(account,password)
         VALUES (#{account},#{password})
     </insert>
-
+    <update id="updatePassword">
+        UPDATE user set password=#{password}
+        <where>
+            user_id=#{userId}
+        </where>
+    </update>
 </mapper>

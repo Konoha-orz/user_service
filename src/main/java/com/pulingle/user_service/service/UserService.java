@@ -2,6 +2,7 @@ package com.pulingle.user_service.service;
 
 import com.pulingle.user_service.domain.dto.RespondBody;
 import com.pulingle.user_service.domain.entity.User_info;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -81,5 +82,12 @@ public interface UserService {
     * @Des: 验证邮箱是否已使用
     */
     RespondBody checkEmail(String email);
+
+    /**
+    * @param: userId,password,
+    * @return: RespondBody
+    * @Des: 修改密码
+    */
+    RespondBody updatePassword(long userId,String password,HttpServletRequest request);
 
 }
